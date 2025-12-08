@@ -2,7 +2,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { Pagination } from "@mui/material";
 import { PokeCard } from "../components/PokeCard";
-import { fetchPokemons } from "../services/pokemonService";
+import { fetchPokemons, PokemonData } from "../services/pokemonService";
 
 export function Home() {
   // Hooks
@@ -11,23 +11,25 @@ export function Home() {
   const [search, setSearch] = useState("");
 
   // SWR
-  const { data, error } = useSWR("pokemons", fetchPokemons);
+  const { data, error } = useSWR<PokemonData[]>("pokemons", fetchPokemons);
 
   if (error) return <p>Erro ao carregar os Pokémons.</p>;
   if (!data) return <p>A carregar...</p>;
 
-  // Lista original
-  const pokemons = data.map((p) => p.name);
-
+  // Lista original (agora cada item já tem { name, image })
+  const pokemons = data;
 
   // Filtrar por pesquisa
-  const filteredPokemons = pokemons.filter((name: string) =>
-    name.toLowerCase().includes(search.toLowerCase())
+  const filteredPokemons = pokemons.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
   );
 
   // Paginação
   const startIndex = (page - 1) * itemsPerPage;
-  const displayedPokemons = filteredPokemons.slice(startIndex, startIndex + itemsPerPage);
+  const displayedPokemons = filteredPokemons.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
@@ -60,8 +62,8 @@ export function Home() {
           marginBottom: "20px",
         }}
       >
-        {displayedPokemons.map((name: string) => (
-          <PokeCard key={name} name={name} />
+        {displayedPokemons.map((p) => (
+          <PokeCard key={p.name} name={p.name} image={p.image} />
         ))}
       </div>
 

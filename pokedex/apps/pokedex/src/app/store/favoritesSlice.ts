@@ -1,29 +1,41 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface FavoritesState {
-  items: string[];
+export interface FavoritePokemon {
+  name: string;
+  image: string;
 }
 
+export interface FavoritesState {
+  items: FavoritePokemon[];
+}
+
+const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
+
 const initialState: FavoritesState = {
-  items: JSON.parse(localStorage.getItem("favorites") || "[]"),
+  items: Array.isArray(saved)
+    ? saved.filter((p) => p && p.name && p.image)
+    : [],
 };
+
 
 const favoritesSlice = createSlice({
   name: "favorites",
   initialState,
   reducers: {
-    addFavorite(state, action: PayloadAction<string>) {
-      if (!state.items.includes(action.payload)) {
-        state.items.push(action.payload);
-        localStorage.setItem("favorites", JSON.stringify(state.items));
+    toggleFavorite(state, action: PayloadAction<FavoritePokemon>) {
+      const pokemon = action.payload;
+      const exists = state.items.some((p) => p.name === pokemon.name);
+
+      if (exists) {
+        state.items = state.items.filter((p) => p.name !== pokemon.name);
+      } else {
+        state.items.push(pokemon);
       }
-    },
-    removeFavorite(state, action: PayloadAction<string>) {
-      state.items = state.items.filter((name) => name !== action.payload);
+
       localStorage.setItem("favorites", JSON.stringify(state.items));
     },
   },
 });
 
-export const { addFavorite, removeFavorite } = favoritesSlice.actions;
+export const { toggleFavorite } = favoritesSlice.actions;
 export default favoritesSlice.reducer;

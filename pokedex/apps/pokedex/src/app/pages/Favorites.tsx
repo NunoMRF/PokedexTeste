@@ -16,10 +16,15 @@ export function Favorites() {
           display: "flex",
           gap: "20px",
           flexWrap: "wrap",
+          marginTop: "20px",
         }}
       >
-        {favorites.map((name) => (
-          <PokeCard key={name} name={name} />
+        {favorites.map((pokemon) => (
+          <PokeCard
+            key={pokemon.name}
+            name={pokemon.name}
+            image={pokemon.image}
+          />
         ))}
       </div>
     </div>

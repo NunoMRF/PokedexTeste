@@ -1,16 +1,24 @@
+import { IconButton } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { addFavorite, removeFavorite } from "../store/favoritesSlice";
+import { toggleFavorite } from "../store/favoritesSlice";
 
 type PokeCardProps = {
   name: string;
+  image: string;
 };
 
-export function PokeCard({ name }: PokeCardProps) {
+export function PokeCard({ name, image }: PokeCardProps) {
   const dispatch = useDispatch();
-  const favorites = useSelector((state: RootState) => state.favorites.items);
 
-  const isFavorite = favorites.includes(name);
+  const favorites = useSelector((state: RootState) => state.favorites.items);
+  const isFavorite = favorites.some((p) => p.name === name);
+
+  function handleToggle() {
+    dispatch(toggleFavorite({ name, image }));
+  }
 
   return (
     <div
@@ -21,28 +29,27 @@ export function PokeCard({ name }: PokeCardProps) {
         width: "150px",
         textAlign: "center",
         backgroundColor: "white",
+        position: "relative",
       }}
     >
-      <h3>{name}</h3>
-
-      <button
-        onClick={() =>
-          isFavorite
-            ? dispatch(removeFavorite(name))
-            : dispatch(addFavorite(name))
-        }
-        style={{
-          padding: "5px 10px",
-          marginTop: "10px",
-          borderRadius: "5px",
-          border: "none",
-          backgroundColor: isFavorite ? "red" : "green",
-          color: "white",
-          cursor: "pointer",
-        }}
+      <IconButton
+        onClick={handleToggle}
+        style={{ position: "absolute", top: 5, right: 5 }}
       >
-        {isFavorite ? "Remover" : "Favorito"}
-      </button>
+        {isFavorite ? (
+          <FavoriteIcon style={{ color: "red" }} />
+        ) : (
+          <FavoriteBorderIcon />
+        )}
+      </IconButton>
+
+      <img
+        src={image}
+        alt={name}
+        style={{ width: "100px", height: "100px" }}
+      />
+
+      <h3 style={{ textTransform: "capitalize" }}>{name}</h3>
     </div>
   );
 }
