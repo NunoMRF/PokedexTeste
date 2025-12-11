@@ -5,7 +5,7 @@ import Favorites from "./pages/Favorites";
 export function App() {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      {/* Navbar simples */}
+      {/* Navegação */}
       <nav style={{ marginBottom: "20px", display: "flex", gap: "20px" }}>
         <Link to="/">Home</Link>
         <Link to="/favoritos">Favoritos</Link>

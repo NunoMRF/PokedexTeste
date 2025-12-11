@@ -16,10 +16,10 @@ export function Home() {
   if (error) return <p>Erro ao carregar os Pokémons.</p>;
   if (!data) return <p>A carregar...</p>;
 
-  // Lista original (agora cada item já tem { name, image })
+  // Lista de pokemons
   const pokemons = data;
 
-  // Filtrar por pesquisa
+  // Filtrar a pesquisa
   const filteredPokemons = pokemons.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -35,7 +35,7 @@ export function Home() {
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1>Pokedex</h1>
 
-      {/* Pesquisa */}
+      {/* Barra de Pesquisa */}
       <input
         type="text"
         placeholder="Pesquisar Pokémon..."

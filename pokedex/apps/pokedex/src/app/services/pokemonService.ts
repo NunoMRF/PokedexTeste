@@ -14,7 +14,7 @@ export async function fetchPokemons(): Promise<PokemonData[]> {
   const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=151");
   const results: PokemonAPIItem[] = response.data.results;
 
-  // Buscar imagem de cada Pokémon
+  // Imagem de cada Pokémon
   const detailed = await Promise.all(
     results.map(async (p: PokemonAPIItem) => {
       const details = await axios.get(p.url);
