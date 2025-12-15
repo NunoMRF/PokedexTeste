@@ -1,9 +1,13 @@
 import { IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { toggleFavorite } from "../../store/favoritesSlice";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { PokemonDetailsData } from "../../hooks/usePokemonDetails";
 
 type Props = {
@@ -37,17 +41,38 @@ export default function PokemonDetailsPresentation({
   isLoading,
 }: Props) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const favorites = useSelector((state: RootState) => state.favorites.items);
-
   const isFavorite = favorites.some((p) => p.name === pokemon.name);
+
+  const [imageIndex, setImageIndex] = useState(0);
 
   function handleToggleFavorite() {
     dispatch(
       toggleFavorite({
         name: pokemon.name,
-        image: pokemon.image,
+        image: pokemon.images[0],
       })
     );
+  }
+
+  function prevImage() {
+    setImageIndex((i) =>
+      i === 0 ? pokemon.images.length - 1 : i - 1
+    );
+  }
+
+  function nextImage() {
+    setImageIndex((i) =>
+      i === pokemon.images.length - 1 ? 0 : i + 1
+    );
+  }
+
+  // 👉 navegação entre pokémon
+  function goToPokemon(id: number) {
+    if (id > 0) {
+      navigate(`/pokemon/${id}`);
+    }
   }
 
   if (isLoading) {
@@ -62,17 +87,43 @@ export default function PokemonDetailsPresentation({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: "'Trebuchet MS', sans-serif",
         padding: 20,
+        position: "relative",
       }}
     >
+      {/* 🔹 SETA POKÉMON ANTERIOR */}
+      <IconButton
+        onClick={() => goToPokemon(pokemon.id - 1)}
+        style={{
+          position: "absolute",
+          left: 20,
+          color: "white",
+        }}
+      >
+        <ArrowBackIosNewIcon fontSize="large" />
+      </IconButton>
+
+      {/* 🔹 SETA PRÓXIMO POKÉMON */}
+      <IconButton
+        onClick={() => goToPokemon(pokemon.id + 1)}
+        style={{
+          position: "absolute",
+          right: 20,
+          color: "white",
+        }}
+      >
+        <ArrowForwardIosIcon fontSize="large" />
+      </IconButton>
+
+      {/* CARD */}
       <div
         style={{
           backgroundColor: "#f5f7fa",
           borderRadius: 18,
           padding: 30,
-          width: 380,
+          width: 400,
           boxShadow: "0 12px 35px rgba(0,0,0,0.45)",
+          fontFamily: "'Trebuchet MS', sans-serif",
         }}
       >
         {/* Nome + Favorito */}
@@ -84,14 +135,7 @@ export default function PokemonDetailsPresentation({
             marginBottom: 12,
           }}
         >
-          <h1
-            style={{
-              textTransform: "capitalize",
-              margin: 0,
-              fontSize: 26,
-              color: "#102a43",
-            }}
-          >
+          <h1 style={{ margin: 0, color: "#102a43", textTransform: "capitalize" }}>
             {pokemon.name}
           </h1>
 
@@ -104,24 +148,61 @@ export default function PokemonDetailsPresentation({
           </IconButton>
         </div>
 
-        {/* Imagem */}
-        <div style={{ textAlign: "center", marginBottom: 16 }}>
-          <img
-            src={pokemon.image}
-            alt={pokemon.name}
-            style={{ width: 120 }}
-          />
-        </div>
-
-        {/* Tipos com badges */}
+        {/* CARROSSEL */}
         <div
           style={{
             display: "flex",
-            gap: 8,
-            marginBottom: 14,
-            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 10,
+            marginBottom: 6,
           }}
         >
+          <IconButton onClick={prevImage}>
+            <ArrowBackIosNewIcon />
+          </IconButton>
+
+          <img
+            src={pokemon.images[imageIndex]}
+            alt={pokemon.name}
+            style={{ width: 140 }}
+          />
+
+          <IconButton onClick={nextImage}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </div>
+
+        {/* 🔹 BOLINHAS */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 6,
+            marginBottom: 6,
+          }}
+        >
+          {pokemon.images.map((_, i) => (
+            <span
+              key={i}
+              onClick={() => setImageIndex(i)}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                backgroundColor: i === imageIndex ? "#1976d2" : "#cfd8dc",
+                cursor: "pointer",
+              }}
+            />
+          ))}
+        </div>
+
+        <p style={{ textAlign: "center", fontSize: 13 }}>
+          {imageIndex + 1} / {pokemon.images.length}
+        </p>
+
+        {/* Tipos */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
           {pokemon.types.map((type) => (
             <span
               key={type}
@@ -141,7 +222,7 @@ export default function PokemonDetailsPresentation({
         </div>
 
         {/* Altura / Peso */}
-        <p style={{ margin: "6px 0", color: "#334e68" }}>
+        <p style={{ color: "#334e68" }}>
           <strong>Altura:</strong> {pokemon.height} |{" "}
           <strong>Peso:</strong> {pokemon.weight}
         </p>

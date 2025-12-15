@@ -7,8 +7,9 @@ export type PokemonStat = {
 };
 
 export type PokemonDetailsData = {
+  id: number;
   name: string;
-  image: string;
+  images: string[];
   types: string[];
   height: number;
   weight: number;
@@ -33,9 +34,17 @@ export default function usePokemonDetails(name: string | undefined) {
     };
   }
 
+  const images = [
+    data.sprites.front_default,
+    data.sprites.back_default,
+    data.sprites.front_shiny,
+    data.sprites.back_shiny,
+  ].filter(Boolean);
+
   const pokemon: PokemonDetailsData = {
+    id: data.id,
     name: data.name,
-    image: data.sprites.front_default,
+    images,
     height: data.height,
     weight: data.weight,
     types: data.types.map(
