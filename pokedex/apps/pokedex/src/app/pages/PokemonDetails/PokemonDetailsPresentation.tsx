@@ -68,7 +68,7 @@ export default function PokemonDetailsPresentation({
     );
   }
 
-  // 👉 navegação entre pokémon
+  // navegação entre pokémons
   function goToPokemon(id: number) {
     if (id > 0) {
       navigate(`/pokemon/${id}`);
@@ -91,7 +91,7 @@ export default function PokemonDetailsPresentation({
         position: "relative",
       }}
     >
-      {/* 🔹 SETA POKÉMON ANTERIOR */}
+      {/* SETA POKÉMON ANTERIOR */}
       <IconButton
         onClick={() => goToPokemon(pokemon.id - 1)}
         style={{
@@ -103,7 +103,7 @@ export default function PokemonDetailsPresentation({
         <ArrowBackIosNewIcon fontSize="large" />
       </IconButton>
 
-      {/* 🔹 SETA PRÓXIMO POKÉMON */}
+      {/* SETA PRÓXIMO POKÉMON */}
       <IconButton
         onClick={() => goToPokemon(pokemon.id + 1)}
         style={{
@@ -173,7 +173,7 @@ export default function PokemonDetailsPresentation({
           </IconButton>
         </div>
 
-        {/* 🔹 BOLINHAS */}
+        {/* BOLINHAS */}
         <div
           style={{
             display: "flex",
